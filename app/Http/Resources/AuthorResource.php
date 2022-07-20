@@ -19,7 +19,7 @@ class AuthorResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'avg'   => round($this->avg('review'),2) ?? 0,
+            'avg'   => round($this->avg('review')) ?? 0,
             'count' => $this->count()
         ];
     }

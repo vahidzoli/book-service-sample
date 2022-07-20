@@ -14,9 +14,9 @@ class BookReview extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
         'comment',
         'review',
+        'user_id'
     ];
 
     public function user()

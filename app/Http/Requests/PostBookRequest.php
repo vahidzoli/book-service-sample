@@ -17,7 +17,8 @@ class PostBookRequest extends FormRequest
             'isbn'          => 'required|numeric|regex:/^\d{13}$/|unique:books',
             'title'         => 'required|string',
             'description'   => 'required|string',
-            'authors'       => 'required|exists:authors,id'
+            "authors"       => "required|array",
+            "authors.*"     => "required|integer|exists:authors,id",
         ];
     }
 }

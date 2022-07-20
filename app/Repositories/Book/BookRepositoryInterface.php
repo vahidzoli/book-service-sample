@@ -4,7 +4,7 @@ namespace App\Repositories\Book;
 
 Interface BookRepositoryInterface
 {
-    public function getAllBooks();
+    public function getAllBooks($request);
 
     public function create($request);
 

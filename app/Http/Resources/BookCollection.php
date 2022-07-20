@@ -16,7 +16,6 @@ class BookCollection extends ResourceCollection
     {
         return [
             'data'  => $this->collection,
-            'links' => $this->resource['links']
         ];
     }
 }

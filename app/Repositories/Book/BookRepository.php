@@ -3,7 +3,10 @@
 namespace App\Repositories\Book;
 
 use App\Book;
+use App\BookReview;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BookRepository implements BookRepositoryInterface
 {
@@ -14,16 +17,48 @@ class BookRepository implements BookRepositoryInterface
         $this->bookModel = $book;
     }
 
-    public function getAllBooks()
+    public function getAllBooks($request)
     {
-        return $this->bookModel->paginate(5);
+        $books = (new Book)->newQuery();
+
+        if (request()->has('title')) {
+            $books->where('title', 'Like', '%' . request()->input('title') . '%');
+        }
+
+        if (request()->has('authors')) {
+            $authors = explode(",", request()->input('authors'));
+            
+            $books->whereHas('authors', function($q) use($authors){
+                $q->whereIn('authors.id', $authors);
+            });
+        }
+
+        if (isset($request->sortColumn)) {
+            $direction = isset($request->sortDirection) ? $request->sortDirection : 'ASC';
+            $books->orderBy($request->sortColumn, $direction);
+
+            if($request->sortColumn == 'avg_review') {
+                $books->withCount(['reviews as avg_review' => function($query) {
+                    $query->select(DB::raw('coalesce(avg(review),0)'));
+                }])->orderBy('avg_review', $direction);
+            };
+        }
+
+        $books = $books->paginate(15, ['*'], 'page', $request->get('page'));
+
+        return $books;
+        // return $this->bookModel->paginate(5);
     }
 
     public function create($request)
     {
-        $book = $this->bookModel->create($request);
-        $book->save();
-        $book->authors()->attach($request['authors']);
+        // try{
+            $book = $this->bookModel->create($request);
+            $book->save();
+            $book->authors()->attach($request['authors']);
+        // } catch (Exception $e){
+        //     return $e->getMessage();
+        // };
 
         return $book;
     }

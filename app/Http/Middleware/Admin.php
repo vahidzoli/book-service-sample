@@ -17,6 +17,12 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
+        if(!Auth::check()) {
+            return response()->json([
+                'message' => "Unauthorized"
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+        
         if(Auth::user()->is_admin === false){
             return response()->json([
                 'message' => "You don't have permission  to access"
