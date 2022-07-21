@@ -5,7 +5,6 @@ declare (strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Book;
-use App\BookReview;
 use App\Repositories\Book\BookRepositoryInterface;
 use App\Http\Requests\PostBookRequest;
 use App\Http\Requests\PostBookReviewRequest;
@@ -14,8 +13,6 @@ use App\Http\Resources\BookResource;
 use App\Http\Resources\BookReviewResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class BooksController extends Controller
 {

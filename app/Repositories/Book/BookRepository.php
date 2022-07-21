@@ -3,8 +3,6 @@
 namespace App\Repositories\Book;
 
 use App\Book;
-use App\BookReview;
-use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +16,29 @@ class BookRepository implements BookRepositoryInterface
     }
 
     public function getAllBooks($request)
+    {
+        return $this->filter($request);
+    }
+
+    public function create($request)
+    {
+        $book = $this->bookModel->create($request);
+        $book->save();
+        $book->authors()->attach($request['authors']);
+
+        return $book;
+    }
+
+    public function postReview($book, $request)
+    {
+        return $book->reviews()->create([
+            'review'    => $request['review'],
+            'comment'   => $request['comment'],
+            'user_id'   => Auth::user()->id
+        ]);
+    }
+
+    public function filter($request)
     {
         $books = (new Book)->newQuery();
 
@@ -47,28 +68,5 @@ class BookRepository implements BookRepositoryInterface
         $books = $books->paginate(15, ['*'], 'page', $request->get('page'));
 
         return $books;
-        // return $this->bookModel->paginate(5);
-    }
-
-    public function create($request)
-    {
-        // try{
-            $book = $this->bookModel->create($request);
-            $book->save();
-            $book->authors()->attach($request['authors']);
-        // } catch (Exception $e){
-        //     return $e->getMessage();
-        // };
-
-        return $book;
-    }
-
-    public function postReview($book, $request)
-    {
-        return $book->reviews()->create([
-            'review'    => $request['review'],
-            'comment'   => $request['comment'],
-            'user_id'   => Auth::user()->id
-        ]);
     }
 }
